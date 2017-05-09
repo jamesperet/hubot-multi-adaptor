@@ -28,15 +28,15 @@ class MultiAdapter extends Adapter
     super @robot
 
   send: (user, strings...) ->
-    console.log("Sending response to user " + user.name + " thru " + user.service + ":")
+    console.log("Sending response to user " + user.user.name + " thru " + user.user.service + ":")
+    console.log(str for str in strings)
     console.log(user)
-    if user.service == "telegram"
-      chatId = user.room;
+    if user.user.service == "telegram"
+      chatId = user.user.room;
       for str in strings
         telegramBot.sendMessage(chatId, str);
     else
       socket = @sockets[user.room]
-      console.log(str for str in strings)
       for str in strings
         socket.emit 'message', str
 

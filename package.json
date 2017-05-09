@@ -1,6 +1,6 @@
 {
   "name": "hubot-multi-adapter",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A Hubot adapter that can receive messages thru socket.io or telegram",
   "main": "src/multi-adapter",
   "scripts": {
