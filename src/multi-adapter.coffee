@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 app.listen 3000, =>
-  console.log('HTTP server on port 3000')
+  console.log('HTTP server on port 80')
 
 TelegramBot = require('node-telegram-bot-api')
 #Telegram bot token (given when you create a new bot using the BotFather);
@@ -59,6 +59,11 @@ class MultiAdapter extends Adapter
 
     app.post '/telegram-api', (req, res) =>
       console.log(req.body.message)
+      user = @userForId req.body.message.chat.id, name: req.body.message.chat.name, room: req.body.message.chat.id
+      #console.log("Message Received from user " + req.body.message.chat.username + ":" )
+      #console.log(req.body.message.chat.content)
+      #user.name = data.username
+      @receive new TextMessage user, req.body.message.chat.content
       res.end()
 
     @emit 'connected'
