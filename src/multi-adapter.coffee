@@ -28,11 +28,16 @@ class MultiAdapter extends Adapter
     super @robot
 
   send: (user, strings...) ->
-    socket = @sockets[user.room]
-    console.log("Sending response to user " + user.name + ":")
-    console.log(str for str in strings)
-    for str in strings
-      socket.emit 'message', str
+    if user.service == "telegram"
+      chatId = user.room;
+      for str in strings
+        telegramBot.sendMessage(chatId, str);
+    else
+      socket = @sockets[user.room]
+      console.log("Sending response to user " + user.name + ":")
+      console.log(str for str in strings)
+      for str in strings
+        socket.emit 'message', str
 
   reply: (user, strings...) ->
     socket = @sockets[user.room]
@@ -50,6 +55,7 @@ class MultiAdapter extends Adapter
         console.log("Message Received from user " + data.username + ":" )
         console.log(data.message)
         user.name = data.username
+        user.service = "socket"
         @receive new TextMessage user, data.message
 
       socket.on 'disconnect', =>
@@ -58,12 +64,13 @@ class MultiAdapter extends Adapter
         delete @sockets[socket.id]
 
     app.post '/telegram-api', (req, res) =>
-      console.log(req.body)
-      #user = @userForId req.body.message.chat.id, name: req.body.message.chat.name, room: req.body.message.chat.id
-      #console.log("Message Received from user " + req.body.message.chat.username + ":" )
-      #console.log(req.body.message.chat.content)
-      #user.name = data.username
-      #@receive new TextMessage user, req.body.message.chat.content
+      @robot.brain.set 'log_id_' + req.body.message.chat.id, new Date().getUTCMilliseconds();
+      user = @userForId req.body.message.chat.id, name: req.body.message.chat.username, room: req.body.message.chat.id
+      console.log("Message Received from user " + req.body.message.chat.username + ":" )
+      console.log(req.body.message.text)
+      user.name = req.body.message.chat.username
+      user.service = "telegram"
+      @receive new TextMessage user, req.body.message.text
       res.end()
 
     @emit 'connected'
