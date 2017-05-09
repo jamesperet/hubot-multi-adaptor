@@ -5,12 +5,19 @@ catch
   {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 
 port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
-console.log("socket.io server on port " + port);
-
 io = require('socket.io').listen port
+console.log("socket.io server on port " + port);
 
 express = require('express')
 app = express()
+
+app.listen(3000, function () {
+  console.log('HTTP server on port 3000')
+})
+
+var TelegramBot = require('node-telegram-bot-api');
+#Telegram bot token (given when you create a new bot using the BotFather);
+var telegramBot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: false});
 
 class MultiAdapter extends Adapter
 
@@ -47,6 +54,9 @@ class MultiAdapter extends Adapter
         console.log("User disconected (" + socket.id + ")")
         @robot.brain.remove 'log_id_' + socket.id
         delete @sockets[socket.id]
+
+    app.post '/telegram-api', (req, res) => 
+      console.log(req.param('message'))
 
     @emit 'connected'
 
