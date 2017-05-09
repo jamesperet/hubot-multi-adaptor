@@ -55,7 +55,7 @@ class MultiAdapter extends Adapter
         delete @sockets[socket.id]
 
     app.post '/telegram-api', (req, res) =>
-      console.log(req.param('message'))
+      console.log(req.body.message)
 
     @emit 'connected'
 
