@@ -14,9 +14,9 @@ app = express()
 app.listen 3000, =>
   console.log('HTTP server on port 3000')
 
-var TelegramBot = require('node-telegram-bot-api');
+TelegramBot = require('node-telegram-bot-api');
 #Telegram bot token (given when you create a new bot using the BotFather);
-var telegramBot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: false});
+telegramBot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: false});
 
 class MultiAdapter extends Adapter
 
