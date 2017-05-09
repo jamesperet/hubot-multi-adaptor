@@ -1,6 +1,6 @@
 {
   "name": "hubot-multi-adapter",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A Hubot adapter that can receive messages thru socket.io or telegram",
   "main": "src/multi-adapter",
   "scripts": {
@@ -10,6 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.2",
-    "socket.io": "^2.0.1"
+    "socket.io": "^2.0.1",
+    "parent-require": "^1.0.0"
+  },
+  "peerDependencies": {
+    "hubot": ">=2.0"
+  },
+  "devDependencies": {
+    "coffee-script": ">=1.2.0"
   }
 }

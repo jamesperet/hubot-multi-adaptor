@@ -1,4 +1,8 @@
-{Adapter,TextMessage} = require 'hubot'
+try
+  {Robot,Adapter,TextMessage,User} = require 'hubot'
+catch
+  prequire = require('parent-require')
+  {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 
 port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
 console.log("socket.io server on port " + port);
