@@ -29,6 +29,7 @@ class MultiAdapter extends Adapter
 
   send: (user, strings...) ->
     console.log("Sending response to user " + user.name + " thru " + user.service + ":")
+    console.log(user)
     if user.service == "telegram"
       chatId = user.room;
       for str in strings
