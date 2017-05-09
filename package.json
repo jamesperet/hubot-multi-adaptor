@@ -1,0 +1,15 @@
+{
+  "name": "hubot-multi-adapter",
+  "version": "0.1.0",
+  "description": "A Hubot adapter that can receive messages thru socket.io or telegram",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Peret",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^2.0.1"
+  }
+}
