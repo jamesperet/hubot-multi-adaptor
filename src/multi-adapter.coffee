@@ -58,12 +58,12 @@ class MultiAdapter extends Adapter
         delete @sockets[socket.id]
 
     app.post '/telegram-api', (req, res) =>
-      console.log(req.body.message)
-      user = @userForId req.body.message.chat.id, name: req.body.message.chat.name, room: req.body.message.chat.id
+      console.log(req.body)
+      #user = @userForId req.body.message.chat.id, name: req.body.message.chat.name, room: req.body.message.chat.id
       #console.log("Message Received from user " + req.body.message.chat.username + ":" )
       #console.log(req.body.message.chat.content)
       #user.name = data.username
-      @receive new TextMessage user, req.body.message.chat.content
+      #@receive new TextMessage user, req.body.message.chat.content
       res.end()
 
     @emit 'connected'
