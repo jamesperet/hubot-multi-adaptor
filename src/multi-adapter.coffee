@@ -65,13 +65,16 @@ class MultiAdapter extends Adapter
 
     app.post '/telegram-api', (req, res) =>
       console.log(req.body)
-      @robot.brain.set 'log_id_' + req.body.message.chat.id, new Date().getUTCMilliseconds();
-      user = @userForId req.body.message.chat.id, name: req.body.message.chat.username, room: req.body.message.chat.id
-      console.log("Message Received from user " + req.body.message.chat.username + ":" )
-      console.log(req.body.message.text)
-      user.name = req.body.message.chat.username
+      chat_id = req.body['message[chat][id]']
+      username = req.body['message[from][username]']
+      text = req.body['message[text]']
+      @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
+      user = @userForId chat_id, name: username, room: chat_id
+      console.log("Message Received from user " + username + ":" )
+      console.log(text)
+      user.name = username
       user.service = "telegram"
-      @receive new TextMessage user, req.body.message.text
+      @receive new TextMessage user, text
       res.end()
 
     @emit 'connected'
