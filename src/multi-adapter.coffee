@@ -28,13 +28,13 @@ class MultiAdapter extends Adapter
     super @robot
 
   send: (user, strings...) ->
+    console.log("Sending response to user " + user.name + " thru " + user.service + ":")
     if user.service == "telegram"
       chatId = user.room;
       for str in strings
         telegramBot.sendMessage(chatId, str);
     else
       socket = @sockets[user.room]
-      console.log("Sending response to user " + user.name + ":")
       console.log(str for str in strings)
       for str in strings
         socket.emit 'message', str
@@ -72,7 +72,6 @@ class MultiAdapter extends Adapter
       user = @userForId chat_id, name: username, room: chat_id
       console.log("Message Received from user " + username + ":" )
       console.log(text)
-      user.name = username
       user.service = "telegram"
       @receive new TextMessage user, text
       res.end()
