@@ -14,7 +14,7 @@ bodyParser = require("body-parser")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
-app.listen 3000, =>
+app.listen 80, =>
   console.log('HTTP server on port 80')
 
 TelegramBot = require('node-telegram-bot-api')
