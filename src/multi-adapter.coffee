@@ -11,9 +11,8 @@ console.log("socket.io server on port " + port);
 express = require('express')
 app = express()
 
-app.listen(3000, function () {
+app.listen 3000, =>
   console.log('HTTP server on port 3000')
-})
 
 var TelegramBot = require('node-telegram-bot-api');
 #Telegram bot token (given when you create a new bot using the BotFather);
@@ -55,7 +54,7 @@ class MultiAdapter extends Adapter
         @robot.brain.remove 'log_id_' + socket.id
         delete @sockets[socket.id]
 
-    app.post '/telegram-api', (req, res) => 
+    app.post '/telegram-api', (req, res) =>
       console.log(req.param('message'))
 
     @emit 'connected'
