@@ -68,12 +68,12 @@ class MultiAdapter extends Adapter
       console.log(req.body)
       chat_id = req.body['message[chat][id]']
       # Get username
-      if req.body['message[from][first_name]']
-        if req.body['message[from][last_name]']
+      if req.body['message[from][first_name]'] != undefined
+        if req.body['message[from][last_name]'] != undefined
           username = req.body['message[from][first_name]'] + " " + req.body['message[from][last_name]']
         else
           username = req.body['message[from][first_name]']
-      else if req.body['message[from][last_name]']
+      else if req.body['message[from][last_name]'] != undefined
         username = req.body['message[from][last_name]']
       else
         username = req.body['message[from][username]']
