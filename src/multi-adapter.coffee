@@ -72,7 +72,7 @@ class MultiAdapter extends Adapter
       text = req.body['message[text]']
       @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
       user = @userForId chat_id, name: user_name, room: chat_id
-      console.log("Message Received from user " + username + ":" )
+      console.log("Message Received from user " + user_name + ":" )
       console.log(text)
       user.service = "telegram"
       user.first_name = req.body['message[from][first_name]']
