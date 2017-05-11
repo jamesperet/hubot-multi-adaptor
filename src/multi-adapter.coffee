@@ -30,7 +30,7 @@ class MultiAdapter extends Adapter
   send: (user, strings...) ->
     console.log("Sending response to user " + user.user.name + " thru " + user.user.service + ":")
     console.log(str for str in strings)
-    console.log(user)
+    #console.log(user)
     if user.user.service == "telegram"
       chatId = user.user.room;
       for str in strings
@@ -68,19 +68,19 @@ class MultiAdapter extends Adapter
       console.log(req.body)
       chat_id = req.body['message[chat][id]']
       # Get username
-      username = req.body['message[from][first_name]'] + " " + req.body['message[from][last_name]']
-      text = req.body['message[text]']
-      @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
-      user = @userForId chat_id, name: username, room: chat_id
-      console.log("Message Received from user " + username + ":" )
-      console.log(text)
-      user.service = "telegram"
       user.first_name = req.body['message[from][first_name]']
       user.last_name = req.body['message[from][lst_name]']
       user.username = req.body['message[from][username]']
+      name = user.first_name + " " + user.last_name
+      text = req.body['message[text]']
+      @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
+      user = @userForId chat_id, name: name, room: chat_id
+      console.log("Message Received from user " + name + ":" )
+      console.log(text)
+      user.service = "telegram"
+
       @receive new TextMessage user, text
       res.end()
-
     @emit 'connected'
 
 exports.use = (robot) ->
