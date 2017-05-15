@@ -87,13 +87,13 @@ class MultiAdapter extends Adapter
     # General Webhook
     app.post '/webhook', (req, res) =>
       console.log(req.body)
-      if(req.body.user != undefined){
-        if(req.body.user.room && req.body.user.service && req.body.user.first_name && req.body.user.last_name && req.body.user.username && req.body.user.msg_type){
+      if req.body.user != undefined
+        if req.body.user.room && req.body.user.service && req.body.user.first_name && req.body.user.last_name && req.body.user.username && req.body.user.msg_type
           chat_id = req.body.user.room
           # Get username
           user_name = req.body.user.first_name + " " + req.body.user.last_name
           command = req.body.command
-          @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
+          @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds()
           user = @userForId chat_id, name: user_name, room: chat_id
           console.log("Webhook received from " + user_name + " with command:" )
           console.log(command)
@@ -105,13 +105,10 @@ class MultiAdapter extends Adapter
           user.msg_type = req.body.user.msg_type
           @receive new TextMessage user, text
           res.status(400).send({"message" : "received"})
-        } else {
+        else
           res.status(400).send({"message" : "The user object has mising properties. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
-        }
-      } else {
+      else
         res.status(200).send({"message" : "Please check the body of your request. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
-      }
-
       res.end()
 
     @emit 'connected'
