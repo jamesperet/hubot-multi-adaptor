@@ -80,26 +80,38 @@ class MultiAdapter extends Adapter
       user.last_name = req.body['message[from][last_name]']
       user.username = req.body['message[from][username]']
       user.room = chat_id
+      user.msg_type = "message"
       @receive new TextMessage user, text
       res.end()
 
     # General Webhook
     app.post '/webhook', (req, res) =>
       console.log(req.body)
-      chat_id = req.body.user.room
-      # Get username
-      user_name = req.body.user.first_name + " " + req.body.user.last_name
-      command = req.body.command
-      @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
-      user = @userForId chat_id, name: user_name, room: chat_id
-      console.log("Webhook received from " + user_name + " with command:" )
-      console.log(command)
-      user.service = "webhook"
-      user.first_name = req.body.user.first_name
-      user.last_name = req.body.user.last_name
-      user.username = req.body.user.username
-      user.room = chat_id
-      @receive new TextMessage user, text
+      if(req.body.user != undefined){
+        if(req.body.user.room && req.body.user.service && req.body.user.first_name && req.body.user.last_name && req.body.user.username && req.body.user.msg_type){
+          chat_id = req.body.user.room
+          # Get username
+          user_name = req.body.user.first_name + " " + req.body.user.last_name
+          command = req.body.command
+          @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
+          user = @userForId chat_id, name: user_name, room: chat_id
+          console.log("Webhook received from " + user_name + " with command:" )
+          console.log(command)
+          user.service = req.body.user.service
+          user.first_name = req.body.user.first_name
+          user.last_name = req.body.user.last_name
+          user.username = req.body.user.username
+          user.room = chat_id
+          user.msg_type = req.body.user.msg_type
+          @receive new TextMessage user, text
+          res.send({"message" : "received"})
+        } else {
+          res.send({"message" : "The user object has mising properties. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
+        }
+      } else {
+        res.send({"message" : "Please check the body of your request. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
+      }
+
       res.end()
 
     @emit 'connected'

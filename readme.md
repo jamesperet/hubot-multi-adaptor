@@ -36,8 +36,10 @@ You can send **webhooks** thru this adapter using the endpoint ```/webhook```. M
   "first_name" : "John",
   "last_name" : "Doe",
   "room" : 455098,
-  "service" : "webhook",
+  "username" : "jamesperet"
+  "service" : "telegram",
   "command" : "example-command"
+  "msg_type" : "command"
 }
 ```
 
