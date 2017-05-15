@@ -101,15 +101,15 @@ class MultiAdapter extends Adapter
           user.first_name = req.body.user.first_name
           user.last_name = req.body.user.last_name
           user.username = req.body.user.username
+          user.command = command
           user.room = chat_id
           user.msg_type = req.body.user.msg_type
-          @receive new TextMessage user, text
+          @receive new TextMessage user, command
           res.status(400).send({"message" : "received"})
         else
           res.status(400).send({"message" : "The user object has mising properties. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
       else
         res.status(200).send({"message" : "Please check the body of your request. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
-      res.end()
 
     @emit 'connected'
 
