@@ -64,6 +64,7 @@ class MultiAdapter extends Adapter
         @robot.brain.remove 'log_id_' + socket.id
         delete @sockets[socket.id]
 
+    # Telegram Webhook
     app.post '/telegram-api', (req, res) =>
       console.log(req.body)
       chat_id = req.body['message[chat][id]']
@@ -82,11 +83,12 @@ class MultiAdapter extends Adapter
       @receive new TextMessage user, text
       res.end()
 
+    # General Webhook
     app.post '/webhook', (req, res) =>
       console.log(req.body)
       chat_id = req.body.user.room
       # Get username
-      user_name = req.body.user.first_name + " " + req.body.user.last_name]
+      user_name = req.body.user.first_name + " " + req.body.user.last_name
       command = req.body.command
       @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
       user = @userForId chat_id, name: user_name, room: chat_id

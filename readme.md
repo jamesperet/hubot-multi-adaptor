@@ -27,4 +27,18 @@ curl -XPOST https://api.telegram.org/botXXXX/deleteWebhook
 curl -XPOST https://api.telegram.org/botXXXX/setWebhook?url=https://example.com/api/telegram
 ```
 
+### Webhooks
+
+You can send **webhooks** thru this adapter using the endpoint ```/webhook```. Make sure your request has a body with the user object:
+
+```
+"user" : {
+  "first_name" : "John",
+  "last_name" : "Doe",
+  "room" : 455098,
+  "service" : "webhook",
+  "command" : "example-command"
+}
+```
+
 More info on *Telegram Bots* can be found [**here**](https://core.telegram.org/bots).
