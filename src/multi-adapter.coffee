@@ -88,23 +88,22 @@ class MultiAdapter extends Adapter
     app.post '/webhook', (req, res) =>
       console.log(req.body)
       if req.body.user != undefined
-        if req.body.user.room && req.body.user.service && req.body.user.first_name && req.body.user.last_name && req.body.user.username && req.body.user.msg_type
+        if req.body.text && req.body.user.room && req.body.user.service && req.body.user.first_name && req.body.user.last_name && req.body.user.username && req.body.user.msg_type
           chat_id = req.body.user.room
           # Get username
           user_name = req.body.user.first_name + " " + req.body.user.last_name
-          command = req.body.command
+          text = req.body.text
           @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds()
           user = @userForId chat_id, name: user_name, room: chat_id
           console.log("Webhook received from " + user_name + " with command:" )
-          console.log(command)
+          console.log(text)
           user.service = req.body.user.service
           user.first_name = req.body.user.first_name
           user.last_name = req.body.user.last_name
           user.username = req.body.user.username
-          user.command = command
           user.room = chat_id
           user.msg_type = req.body.user.msg_type
-          @receive new TextMessage user, command
+          @receive new TextMessage user, text
           res.status(400).send({"message" : "received"})
         else
           res.status(400).send({"message" : "The user object has mising properties. Follow instruction on https://github.com/jamesperet/hubot-multi-adaptor"})
