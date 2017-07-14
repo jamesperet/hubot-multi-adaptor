@@ -4,9 +4,9 @@ catch
   prequire = require('parent-require')
   {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 
-port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
-io = require('socket.io').listen port
-console.log("socket.io server on port " + port);
+socket_port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
+io = require('socket.io').listen socket_port
+console.log("socket.io server on port " + socket_port);
 
 express = require('express')
 app = express()
@@ -14,8 +14,9 @@ bodyParser = require("body-parser")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
-app.listen 80, =>
-  console.log('HTTP server on port 80')
+http_port = parseInt process.env.HUBOT_HTTP_PORT or 80
+app.listen http_port, =>
+  console.log('HTTP server on port ' + http_port)
 
 TelegramBot = require('node-telegram-bot-api')
 #Telegram bot token (given when you create a new bot using the BotFather);
@@ -67,18 +68,19 @@ class MultiAdapter extends Adapter
     # Telegram Webhook
     app.post '/telegram-api', (req, res) =>
       console.log(req.body)
-      chat_id = req.body['message[chat][id]']
+      console.log(req.body.message.text)
+      chat_id = req.body.message.chat.id
       # Get username
-      user_name = req.body['message[from][first_name]'] + " " + req.body['message[from][last_name]']
-      text = req.body['message[text]']
+      user_name = req.body.message.from.first_name + " " + req.body.message.from.last_name
+      text = req.body.message.text
       @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
       user = @userForId chat_id, name: user_name, room: chat_id
       console.log("Message Received from user " + user_name + ":" )
       console.log(text)
       user.service = "telegram"
-      user.first_name = req.body['message[from][first_name]']
-      user.last_name = req.body['message[from][last_name]']
-      user.username = req.body['message[from][username]']
+      user.first_name = req.body.message.from.first_name
+      user.last_name = req.body.message.from.last_name
+      user.username = req.body.message.from.username
       user.room = chat_id
       user.msg_type = "message"
       @receive new TextMessage user, text
