@@ -4,19 +4,22 @@ catch
   prequire = require('parent-require')
   {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 
-socket_port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
-io = require('socket.io').listen socket_port
-console.log("socket.io server on port " + socket_port);
-
+logger = require("./logger")
 express = require('express')
 app = express()
 bodyParser = require("body-parser")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
+app.use(require('morgan')({ "stream": logger.stream }));
 
 http_port = parseInt process.env.HUBOT_HTTP_PORT or 80
 app.listen http_port, =>
-  console.log('HTTP server on port ' + http_port)
+  #console.log('HTTP server on port ' + http_port)
+  logger.winston.info("app listening on port " + http_port + ".")
+
+socket_port = parseInt process.env.HUBOT_SOCKETIO_PORT or 9090
+io = require('socket.io').listen socket_port
+logger.winston.info("socket.io server on port " + socket_port);
 
 TelegramBot = require('node-telegram-bot-api')
 #Telegram bot token (given when you create a new bot using the BotFather);
@@ -29,9 +32,8 @@ class MultiAdapter extends Adapter
     super @robot
 
   send: (user, strings...) ->
-    console.log("Sending response to user " + user.user.name + " thru " + user.user.service + ":")
-    console.log(str for str in strings)
-    console.log(user)
+    for str in strings
+      logger(@robot, "info", "Sending response to user " + user.user.name + " thru " + user.user.service + ": " + str, { message: str, user: user } )
     if user.user.service == "telegram"
       chatId = user.user.room;
       for str in strings
@@ -46,37 +48,50 @@ class MultiAdapter extends Adapter
     for str in strings
       socket.emit 'message', str
 
+  log: (log_msg) ->
+    for socket in @sockets
+      socket.emit 'message', log_msg
+
   run: ->
     io.sockets.on 'connection', (socket) =>
+
+      # logger.on 'logging', (transport, level, msg, meta) =>
+      #     #console.log("> [%s] and [%s] have now been logged at [%s] to [%s]", msg, JSON.stringify(meta), level, transport.name)
+      #     socket.emit 'message', msg
+
       @sockets[socket.id] = socket
-      console.log("New user connect (" + socket.id + ")")
+      #console.log("New user connect (" + socket.id + ")")
+      logger(@robot, "info", "New user connect (" + socket.id + ")" )
       @robot.brain.set 'log_id_' + socket.id, new Date().getUTCMilliseconds();
 
       socket.on 'message', (data) =>
         user = @userForId socket.id, name: data.username, room: socket.id
-        console.log("Message Received from user " + data.username + ":" )
-        console.log(data.message)
+        logger(@robot, "info", "Message Received from user " + data.username + " thru socket: " + data.message, { data: data } )
+        #console.log("Message Received from user " + data.username + ":" )
+        #console.log(data.message)
         user.name = data.username
         user.service = "socket"
         @receive new TextMessage user, data.message
 
       socket.on 'disconnect', =>
-        console.log("User disconected (" + socket.id + ")")
+        #console.log("User disconected (" + socket.id + ")")
+        logger(@robot, "info", "User disconected (" + socket.id + ")" )
         @robot.brain.remove 'log_id_' + socket.id
         delete @sockets[socket.id]
 
     # Telegram Webhook
     app.post '/telegram-api', (req, res) =>
-      console.log(req.body)
-      console.log(req.body.message.text)
-      chat_id = req.body.message.chat.id
       # Get username
       user_name = req.body.message.from.first_name + " " + req.body.message.from.last_name
+      # Get text
       text = req.body.message.text
+      # Get Chat ID
+      chat_id = req.body.message.chat.id
+      # Log Msg
+      logger(@robot, "info", "Message Received from user #{user_name} (#{req.body.message.from.username}) thru Telegram: " + text, { data: req.body } )
+      # Set other things
       @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds();
       user = @userForId chat_id, name: user_name, room: chat_id
-      console.log("Message Received from user " + user_name + ":" )
-      console.log(text)
       user.service = "telegram"
       user.first_name = req.body.message.from.first_name
       user.last_name = req.body.message.from.last_name
@@ -97,8 +112,7 @@ class MultiAdapter extends Adapter
           text = req.body.text
           @robot.brain.set 'log_id_' + chat_id, new Date().getUTCMilliseconds()
           user = @userForId chat_id, name: user_name, room: chat_id
-          console.log("Webhook received from " + user_name + " with command:" )
-          console.log(text)
+          logger(@robot, "info", "Webhook received from #{user_name} with command: " + text, { data: req.body } )
           user.service = req.body.user.service
           user.first_name = req.body.user.first_name
           user.last_name = req.body.user.last_name
