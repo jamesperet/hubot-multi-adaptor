@@ -1,5 +1,6 @@
 var winston = require('winston');
 winston.emitErrs = true;
+winston.setLevels(winston.config.syslog.levels);
 
 var winstonLog = new winston.Logger({
     transports: [
@@ -13,7 +14,7 @@ var winstonLog = new winston.Logger({
             colorize: false
         }),
         new winston.transports.Console({
-            level: 'info',
+            level: 'debug',
             handleExceptions: true,
             json: false,
             colorize: true
@@ -21,6 +22,8 @@ var winstonLog = new winston.Logger({
     ],
     exitOnError: false
 });
+
+
 
 var log = function(robot, level, msg, data){
   //console.log("logging data...")

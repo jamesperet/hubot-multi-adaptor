@@ -10,7 +10,7 @@ app = express()
 bodyParser = require("body-parser")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-app.use(require('morgan')({ "stream": logger.stream }));
+app.use(require('morgan')("default", { "stream": logger.stream }));
 
 http_port = parseInt process.env.HUBOT_HTTP_PORT or 80
 app.listen http_port, =>
