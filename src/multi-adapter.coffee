@@ -71,6 +71,7 @@ class MultiAdapter extends Adapter
         #console.log(data.message)
         user.name = data.username
         user.service = "socket"
+        user.token = data.token
         @receive new TextMessage user, data.message
 
       socket.on 'disconnect', =>

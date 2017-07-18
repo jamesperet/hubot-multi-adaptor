@@ -34,7 +34,7 @@ var log = function(robot, level, msg, data){
     for(socket_name in sockets) {
       if(sockets.hasOwnProperty(socket_name)) {
           var socket = sockets[socket_name];
-          socket.emit('log', { message: msg, data: data})
+          socket.emit('log', { message: msg, data: data, level: level})
       }
     }
   }
