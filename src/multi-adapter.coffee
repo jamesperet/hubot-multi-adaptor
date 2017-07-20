@@ -8,7 +8,7 @@ logger = require("./logger")
 express = require('express')
 app = express()
 bodyParser = require("body-parser")
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
 app.use(require('morgan')("default", { "stream": logger.stream }));
 
